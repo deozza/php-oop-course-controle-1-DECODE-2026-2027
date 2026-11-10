@@ -41,4 +41,39 @@ class ContactService {
             json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
         );
     }
+
+    public function getAllContacts(): array
+    {
+        if (!is_dir(self::CONTACT_DIR)) {
+            return [];
+        }
+
+        $files = glob(self::CONTACT_DIR . '*.json') ?: [];
+        $contacts = [];
+        $contactForm = new ContactForm();
+
+        foreach ($files as $filePath) {
+            if (!is_file($filePath)) {
+                continue;
+            }
+
+            $content = file_get_contents($filePath);
+            if ($content === false) {
+                continue;
+            }
+
+            $data = json_decode($content, true);
+            if ($contactForm->checkContactOutputIsValid($data)) {
+                $contacts[] = [
+                    'email' => $data['email'],
+                    'subject' => $data['subject'],
+                    'message' => $data['message'],
+                    'dateOfCreation' => (int) $data['dateOfCreation'],
+                    'dateOfLastUpdate' => (int) $data['dateOfLastUpdate'],
+                ];
+            }
+        }
+
+        return $contacts;
+    }
 }
