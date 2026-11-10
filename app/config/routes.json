@@ -8,5 +8,10 @@
     "uri": "/contact",
     "method": "POST",
     "controller": "PostContactController"
+  },
+  {
+    "uri": "/contact",
+    "method": "GET",
+    "controller": "GetContactsController"
   }
 ]
