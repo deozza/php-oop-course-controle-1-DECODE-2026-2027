@@ -19,6 +19,12 @@ class GetContactsController extends AbstractController {
             );
         }
 
+        $queryFile = $_GET['file'] ?? ($_GET['filename'] ?? null);
+        if ($queryFile !== null && trim((string) $queryFile) !== '') {
+            $getContactController = new GetContactController();
+            return $getContactController->process($request);
+        }
+
         $contactService = new ContactService();
         $contacts = $contactService->getAllContacts();
 
