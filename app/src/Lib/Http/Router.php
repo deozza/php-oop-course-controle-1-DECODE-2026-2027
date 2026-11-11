@@ -74,7 +74,46 @@ class Router {
 
     private function checkUri(Request $request, string $uri): bool {
         $requestPath = parse_url($request->getUri(), PHP_URL_PATH) ?: '/';
-        return $requestPath === $uri;
+        if ($requestPath !== '/') {
+            $requestPath = rtrim($requestPath, '/');
+        }
+
+        $routeUri = $uri !== '/' ? rtrim($uri, '/') : '/';
+
+        if (
+            strpos($routeUri, '{') === false &&
+            strpos($routeUri, '<') === false &&
+            strpos($routeUri, ':') === false
+        ) {
+            if ($requestPath === $routeUri) {
+                $request->setPathParams([]);
+                return true;
+            }
+            return false;
+        }
+
+        $pattern = preg_replace_callback(
+            '/\{([a-zA-Z0-9_]+)\}|<([a-zA-Z0-9_]+)>|:([a-zA-Z0-9_]+)/',
+            static function (array $matches): string {
+                $paramName = $matches[1] ?: ($matches[2] ?: $matches[3]);
+                return '(?P<' . $paramName . '>[^/]+)';
+            },
+            $routeUri
+        );
+        $pattern = '#^' . $pattern . '$#';
+
+        if (preg_match($pattern, $requestPath, $matches)) {
+            $params = [];
+            foreach ($matches as $key => $value) {
+                if (is_string($key)) {
+                    $params[$key] = rawurldecode($value);
+                }
+            }
+            $request->setPathParams($params);
+            return true;
+        }
+
+        return false;
     }
 
     private function checkMethod(Request $request, string $method): bool {
