@@ -120,10 +120,11 @@ class ContactService {
 
             $ts = (int) $data['dateOfCreation'];
             $email = (string) $data['email'];
+            $tsFilename = sprintf(Contact::CONTACT_FILENAME_FORMAT, $ts, $email);
             $id24 = sprintf(Contact::CONTACT_ID_FORMAT, date('Y-m-d_H-i-s', $ts), $email);
             $id12 = sprintf(Contact::CONTACT_ID_FORMAT, date('Y-m-d_h-i-s', $ts), $email);
 
-            if ($withJson === $id24 || $withJson === $id12) {
+            if ($withJson === $tsFilename || $withJson === $id24 || $withJson === $id12) {
                 return $filePath;
             }
         }
@@ -156,5 +157,44 @@ class ContactService {
             'dateOfCreation' => (int) $data['dateOfCreation'],
             'dateOfLastUpdate' => (int) $data['dateOfLastUpdate'],
         ];
+    }
+
+    public function updateContact(string $filename, array $payload): ?array
+    {
+        $filePath = $this->findContactFilePath($filename);
+        if ($filePath === null) {
+            return null;
+        }
+
+        $content = file_get_contents($filePath);
+        if ($content === false) {
+            return null;
+        }
+
+        $data = json_decode($content, true);
+        $contactForm = new ContactForm();
+        if ($contactForm->checkContactOutputIsValid($data) === false) {
+            return null;
+        }
+
+        foreach (ContactForm::EXPECTED_PAYLOAD_PROPERTIES as $field) {
+            if (array_key_exists($field, $payload)) {
+                $data[$field] = $payload[$field];
+            }
+        }
+
+        $data['dateOfCreation'] = (int) $data['dateOfCreation'];
+        $data['dateOfLastUpdate'] = time();
+
+        if ($contactForm->checkContactOutputIsValid($data) === false) {
+            throw new \RuntimeException('Invalid updated contact output data');
+        }
+
+        file_put_contents(
+            $filePath,
+            json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+        );
+
+        return $data;
     }
 }
