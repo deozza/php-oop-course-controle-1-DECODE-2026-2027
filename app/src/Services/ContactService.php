@@ -197,4 +197,14 @@ class ContactService {
 
         return $data;
     }
+
+    public function deleteContact(string $filename): bool
+    {
+        $filePath = $this->findContactFilePath($filename);
+        if ($filePath === null || !is_file($filePath)) {
+            return false;
+        }
+
+        return unlink($filePath);
+    }
 }
