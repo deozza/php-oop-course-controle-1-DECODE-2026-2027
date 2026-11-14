@@ -7,6 +7,7 @@ class ContactForm {
     public const EXPECTED_PAYLOAD_PROPERTIES = ['email', 'subject', 'message'];
     public const EXPECTED_CONTACT_PROPERTIES = ['email', 'subject', 'message', 'dateOfCreation', 'dateOfLastUpdate'];
 
+    // Valide les données reçues lors de la création d'un contact
     public function checkPayloadIsValid(mixed $payload): bool
     {
         if (!is_array($payload)) {
@@ -37,6 +38,7 @@ class ContactForm {
         return true;
     }
 
+    // Valide les données reçues lors de la mise à jour partielle d'un contact
     public function checkUpdatePayloadIsValid(mixed $payload): bool
     {
         if (!is_array($payload) || empty($payload)) {
@@ -60,6 +62,7 @@ class ContactForm {
         return true;
     }
 
+    // Valide la structure complète d'un contact avant sauvegarde ou renvoi
     public function checkContactOutputIsValid(mixed $data): bool
     {
         if (!is_array($data)) {
@@ -99,3 +102,4 @@ class ContactForm {
         return true;
     }
 }
+

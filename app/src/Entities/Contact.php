@@ -39,11 +39,13 @@ class Contact implements \JsonSerializable {
         $this->dateOfLastUpdate = $dateOfLastUpdate;
     }
 
+    // Génère le nom du fichier formaté pour la réponse JSON
     public function getId(): string
     {
         return sprintf(self::CONTACT_ID_FORMAT, date('Y-m-d_H-i-s', $this->dateOfCreation), $this->email);
     }
 
+    // Génère le nom du fichier stocké sur le disque
     public function getFilename(): string
     {
         return sprintf(self::CONTACT_FILENAME_FORMAT, $this->dateOfCreation, $this->email);
@@ -65,3 +67,4 @@ class Contact implements \JsonSerializable {
         return $this->toArray();
     }
 }
+
