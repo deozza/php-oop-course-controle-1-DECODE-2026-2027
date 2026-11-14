@@ -9,6 +9,7 @@ class Router {
     private const ROUTE_CONFIG_PATH = __DIR__ . '/../../../config/routes.json';
     private const CONTROLLER_NAMESPACE = 'App\\Controllers\\';
 
+    // Traite la requête entrante et appelle le contrôleur correspondant
     public function main(Request $request): Response {
         $routes = $this->getRoutes();
         $uriFoundFlag = false;
@@ -72,6 +73,7 @@ class Router {
         }
     }
 
+    // Vérifie si l'URI correspond à la route et extrait les paramètres dynamiques
     private function checkUri(Request $request, string $uri): bool {
         $requestPath = parse_url($request->getUri(), PHP_URL_PATH) ?: '/';
         if ($requestPath !== '/') {

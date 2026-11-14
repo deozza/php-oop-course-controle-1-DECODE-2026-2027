@@ -73,6 +73,7 @@ class Request {
         throw new \Exception("header $key not found");
     }
 
+    // Vérifie si un header possède la valeur attendue
     public function headerHasValue(string $key, string $value): bool
     {
         if ($this->hasHeader($key) === false) {
@@ -100,3 +101,4 @@ class Request {
         return $this->pathParams[$key] ?? null;
     }
 }
+
