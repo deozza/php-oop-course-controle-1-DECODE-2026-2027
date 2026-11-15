@@ -9,6 +9,7 @@ use App\Services\ContactService;
 
 class DeleteContactController extends AbstractController {
 
+    // Supprime un formulaire de contact existant
     public function process(Request $request): Response
     {
         if ($request->hasHeader('Content-Type') && $request->headerHasValue('Content-Type', 'application/json') === false) {
@@ -42,3 +43,4 @@ class DeleteContactController extends AbstractController {
         return new Response('', 204, ['Content-Type' => 'application/json']);
     }
 }
+

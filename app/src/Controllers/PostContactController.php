@@ -10,6 +10,7 @@ use App\Services\ContactService;
 
 class PostContactController extends AbstractController {
 
+    // Crée et enregistre un nouveau formulaire de contact
     public function process(Request $request): Response
     {
         if ($request->headerHasValue('Content-Type', 'application/json') === false) {
@@ -42,3 +43,4 @@ class PostContactController extends AbstractController {
         );
     }
 }
+

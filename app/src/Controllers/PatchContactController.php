@@ -10,6 +10,7 @@ use App\Services\ContactService;
 
 class PatchContactController extends AbstractController {
 
+    // Met à jour un formulaire de contact existant
     public function process(Request $request): Response
     {
         if ($request->headerHasValue('Content-Type', 'application/json') === false) {
@@ -65,3 +66,4 @@ class PatchContactController extends AbstractController {
         );
     }
 }
+

@@ -9,6 +9,7 @@ use App\Services\ContactService;
 
 class GetContactController extends AbstractController {
 
+    // Retourne un formulaire de contact spécifique à partir de son nom de fichier
     public function process(Request $request): Response
     {
         if ($request->hasHeader('Content-Type') && $request->headerHasValue('Content-Type', 'application/json') === false) {
@@ -46,3 +47,4 @@ class GetContactController extends AbstractController {
         );
     }
 }
+

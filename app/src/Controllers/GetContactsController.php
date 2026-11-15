@@ -9,6 +9,7 @@ use App\Services\ContactService;
 
 class GetContactsController extends AbstractController {
 
+    // Retourne la liste de tous les formulaires de contact
     public function process(Request $request): Response
     {
         if ($request->hasHeader('Content-Type') && $request->headerHasValue('Content-Type', 'application/json') === false) {
