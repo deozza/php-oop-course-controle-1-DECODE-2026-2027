@@ -26,6 +26,7 @@ class ContactService {
         return $contact;
     }
 
+    // Sauvegarde le contact dans un fichier JSON
     public function saveContact(Contact $contact): void
     {
         $contactForm = new ContactForm();
@@ -42,6 +43,7 @@ class ContactService {
         );
     }
 
+    // Récupère la liste de tous les contacts enregistrés
     public function getAllContacts(): array
     {
         if (!is_dir(self::CONTACT_DIR)) {
@@ -77,6 +79,7 @@ class ContactService {
         return $contacts;
     }
 
+    // Recherche le chemin du fichier correspondant au nom fourni
     public function findContactFilePath(string $filename): ?string
     {
         $sanitized = basename(rawurldecode(trim($filename)));
@@ -159,6 +162,7 @@ class ContactService {
         ];
     }
 
+    // Met à jour les champs d'un contact existant et sa date de modification
     public function updateContact(string $filename, array $payload): ?array
     {
         $filePath = $this->findContactFilePath($filename);
@@ -198,6 +202,7 @@ class ContactService {
         return $data;
     }
 
+    // Supprime le fichier d'un contact existant
     public function deleteContact(string $filename): bool
     {
         $filePath = $this->findContactFilePath($filename);
