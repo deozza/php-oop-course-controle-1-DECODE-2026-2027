@@ -1,13 +1,13 @@
 <?php
 
 
-namespace App\Http;
+namespace App\lib\Http;
 
-use App\Controllers\AbstractController;
+use App\lib\Controllers\AbstractController;
 
 class Router {
 
-    private const string ROUTE_CONFIG_PATH = __DIR__ . '/../../config/routes.json';
+    private const string ROUTE_CONFIG_PATH = __DIR__ . '/../../../config/routes.json';
     private const string CONTROLLER_NAMESPACE = 'App\\Controllers\\';
     
     public function main(Request $request) {
@@ -20,7 +20,7 @@ class Router {
         foreach($routes as $route) {
             $this->validateConfig($route);
             
-            if($this->checkUri($request, $route('uri')) === false) {
+            if($this->checkUri($request, $route['uri']) === false) {
                 continue;
             }
             $uriFoundFlag = true;
@@ -70,7 +70,7 @@ class Router {
     }
 
     private function checkUri(Request $request, string $uri): bool {
-        return $request->getUri() === $uri;
+        return parse_url($request->getUri(), PHP_URL_PATH) === $uri;
     }
     
     private function checkMethod(Request $request, string $method): bool {
@@ -97,5 +97,3 @@ class Router {
  
     
 }
-
-?>
