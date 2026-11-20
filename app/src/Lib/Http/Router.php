@@ -1,13 +1,13 @@
 <?php
 
 
-namespace App\Http;
+namespace App\Lib\Http;
 
-use App\Controllers\AbstractController;
+use App\Lib\Controllers\AbstractController;
 
 class Router {
 
-    private const string ROUTE_CONFIG_PATH = __DIR__ . '/../../config/routes.json';
+    private const string ROUTE_CONFIG_PATH = __DIR__ . '/../../../config/routes.json';
     private const string CONTROLLER_NAMESPACE = 'App\\Controllers\\';
     
     public function main(Request $request) {
@@ -20,7 +20,7 @@ class Router {
         foreach($routes as $route) {
             $this->validateConfig($route);
             
-            if($this->checkUri($request, $route('uri')) === false) {
+            if($this->checkUri($request, $route['uri']) === false) {
                 continue;
             }
             $uriFoundFlag = true;
@@ -29,6 +29,10 @@ class Router {
                 continue;
             }
             $methodFoundFlag = true;
+
+            if($this->checkQueryParams($request, $route) === false) {
+                continue;
+            }
 
             try {
                 $controllerInstance = $this->getValidControllerInstance($route['controller']);
@@ -65,12 +69,27 @@ class Router {
     
     private function validateConfig(array $route): void {
         if(array_key_exists('uri', $route) === false || array_key_exists('method', $route) === false) {
-            throw new \Exception(500, 'Le fichier de config est mal écrit');
+            throw new \Exception('Le fichier de config est mal écrit');
         }
     }
 
     private function checkUri(Request $request, string $uri): bool {
-        return $request->getUri() === $uri;
+        return $request->getPath() === $uri;
+    }
+
+    // si la route demande des paramètres (ex: "query": ["file"]), on vérifie qu'ils sont présents dans l'url
+    private function checkQueryParams(Request $request, array $route): bool {
+        if(array_key_exists('query', $route) === false) {
+            return true;
+        }
+
+        foreach($route['query'] as $param) {
+            if($request->getQueryParam($param) === null) {
+                return false;
+            }
+        }
+
+        return true;
     }
     
     private function checkMethod(Request $request, string $method): bool {
@@ -88,7 +107,7 @@ class Router {
         $controllerInstance = new $controllerName();
 
         if(is_subclass_of($controllerInstance, AbstractController::class) === false) {
-            throw new \Exception('Controller ' . $controllerName . ' must extends App\Controllers\AbstractController.');
+            throw new \Exception('Controller ' . $controllerName . ' must extends App\Lib\Controllers\AbstractController.');
         }
 
         return $controllerInstance;
@@ -97,5 +116,3 @@ class Router {
  
     
 }
-
-?>
