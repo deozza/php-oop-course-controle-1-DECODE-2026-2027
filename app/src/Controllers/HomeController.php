@@ -9,11 +9,8 @@ class HomeController extends AbstractController {
     public function process(Request $request): Response {
         $response = new Response();
         $response->statusCode = 200;
-        $response->content = 'success';
+        $response->content = "Success";
 
         return $response;
     }
 }
-
-?>
-

@@ -29,5 +29,3 @@ class Request {
         return $this->headers;
     }
 }
-
-?>

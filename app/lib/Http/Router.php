@@ -20,7 +20,7 @@ class Router {
         foreach($routes as $route) {
             $this->validateConfig($route);
             
-            if($this->checkUri($request, $route('uri')) === false) {
+            if($this->checkUri($request, $route['uri']) === false) {
                 continue;
             }
             $uriFoundFlag = true;
@@ -41,13 +41,13 @@ class Router {
 
         if($uriFoundFlag === true && $methodFoundFlag === false) {
             $response->statusCode = 405;
-            $response->content = "invalid method";
+            $response->content = json_encode(['message' => 'Invalid method']);
 
             return $response;
         }
 
         $response->statusCode = 404;
-        $response->content = "route note found";
+        $response->content = json_encode(['message' => 'Route note found']);
 
         return $response;
     }
@@ -70,6 +70,13 @@ class Router {
     }
 
     private function checkUri(Request $request, string $uri): bool {
+        if ($uri === '/contact/<filename>') {
+
+            $fileName = basename($request->getUri());
+
+            return $request->getUri() === "/contact/" . $fileName;
+        }
+
         return $request->getUri() === $uri;
     }
     
@@ -97,5 +104,3 @@ class Router {
  
     
 }
-
-?>

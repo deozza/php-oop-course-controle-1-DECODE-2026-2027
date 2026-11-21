@@ -1,6 +1,6 @@
 services:
   php-framework-php:
-    container_name: php-framework-php
+    container_name: php-framework
     build:
       context: .
       dockerfile: Dockerfile
@@ -8,4 +8,6 @@ services:
       - ./app:/var/www/html
       - ./log:/var/log/apache2/
     ports:
-      - 8080:80
+      - 8181:80
+
+# Ayant des difficultés avec mon port 8080, j'ai modifié vers le port 8181 :)
