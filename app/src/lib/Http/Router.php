@@ -42,13 +42,15 @@ class Router
 
         if ($uriFoundFlag === true && $methodFoundFlag === false) {
             $response->statusCode = 405;
-            $response->content = "invalid method";
+            $response->headers['Content-Type'] = 'application/json';
+            $response->content = json_encode(['error' => 'invalid method']);
 
             return $response;
         }
 
         $response->statusCode = 404;
-        $response->content = "route note found";
+        $response->headers['Content-Type'] = 'application/json';
+        $response->content = json_encode(['error' => 'route not found']);
 
         return $response;
     }
