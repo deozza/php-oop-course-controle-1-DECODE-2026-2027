@@ -76,7 +76,9 @@ class Router
 
     private function checkUri(Request $request, string $uri): bool
     {
-        return $request->getUri() === $uri;
+        $pattern = '#^' . str_replace('{filename}', '[^/]+', $uri) . '$#';
+
+        return preg_match($pattern, $request->getUri()) === 1;
     }
 
     private function checkMethod(Request $request, string $method): bool
