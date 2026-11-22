@@ -1,17 +1,19 @@
 <?php
 
-namespace App\Http;
+namespace App\Lib\Http;
 
 class Request {
     private readonly string $uri;
     private readonly string $method;
     private readonly array $headers;
+    private readonly string $body;
 
     public function __construct()
     {
         $this->uri = $_SERVER['REQUEST_URI'];
         $this->method = $_SERVER['REQUEST_METHOD'];
         $this->headers = getallheaders();
+        $this->body = file_get_contents('php://input');
     }
 
     public function getUri(): string
@@ -28,6 +30,9 @@ class Request {
     {
         return $this->headers;
     }
-}
 
-?>
+    public function getBody(): string
+    {
+        return $this->body;
+    }
+}

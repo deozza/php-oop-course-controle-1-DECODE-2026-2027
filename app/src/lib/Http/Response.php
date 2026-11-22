@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Http;
+namespace App\Lib\Http;
 
 class Response {
     public int $statusCode;
     public string $content;
+    public array $headers = [];
 }
-
-
-?>
 

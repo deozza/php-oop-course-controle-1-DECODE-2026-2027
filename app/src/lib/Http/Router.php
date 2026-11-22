@@ -1,13 +1,14 @@
 <?php
 
 
-namespace App\Http;
+namespace App\Lib\Http;
 
-use App\Controllers\AbstractController;
+
+use App\Lib\Controllers\AbstractController;
 
 class Router {
 
-    private const string ROUTE_CONFIG_PATH = __DIR__ . '/../../config/routes.json';
+    private const string ROUTE_CONFIG_PATH = __DIR__ . '/../../../config/routes.json';
     private const string CONTROLLER_NAMESPACE = 'App\\Controllers\\';
     
     public function main(Request $request) {
@@ -20,7 +21,7 @@ class Router {
         foreach($routes as $route) {
             $this->validateConfig($route);
             
-            if($this->checkUri($request, $route('uri')) === false) {
+            if($this->checkUri($request, $route['uri']) === false) {
                 continue;
             }
             $uriFoundFlag = true;
@@ -41,7 +42,8 @@ class Router {
 
         if($uriFoundFlag === true && $methodFoundFlag === false) {
             $response->statusCode = 405;
-            $response->content = "invalid method";
+            $response->headers['Content-Type'] = 'application/json';
+            $response->content = json_encode(['error' => 'Invalid method'], JSON_THROW_ON_ERROR);
 
             return $response;
         }
@@ -70,7 +72,32 @@ class Router {
     }
 
     private function checkUri(Request $request, string $uri): bool {
-        return $request->getUri() === $uri;
+        $requestUri = parse_url($request->getUri(), PHP_URL_PATH);
+        if (!is_string($requestUri)) {
+            return false;
+        }
+
+        $routeParts = explode('/', $uri);
+        $requestParts = explode('/', $requestUri);
+        if (count($routeParts) !== count($requestParts)) {
+            return false;
+        }
+
+        foreach ($routeParts as $index => $routePart) {
+            if (preg_match('/^\{[^}]+\}$/', $routePart) === 1) {
+                if ($requestParts[$index] === '') {
+                    return false;
+                }
+
+                continue;
+            }
+
+            if ($routePart !== $requestParts[$index]) {
+                return false;
+            }
+        }
+
+        return true;
     }
     
     private function checkMethod(Request $request, string $method): bool {
@@ -97,5 +124,3 @@ class Router {
  
     
 }
-
-?>
