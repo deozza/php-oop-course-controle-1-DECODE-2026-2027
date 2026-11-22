@@ -1,6 +1,32 @@
 [
   {
     "uri": "/",
-    "method": "GET"
+    "method": "GET",
+    "controller": "HomeController"
+  },
+  {
+    "uri": "/contact",
+    "method": "POST",
+    "controller": "ContactController"
+  },
+  {
+    "uri": "/contact",
+    "method": "GET",
+    "controller": "GetAllContactsController"
+  },
+  {
+    "uri": "/contact",
+    "method": "PATCH",
+    "controller": "PatchContactController"
+  },
+  {
+    "uri": "/contact",
+    "method": "DELETE",
+    "controller": "DeleteContactController"
+  },
+  {
+    "uri": "/contact/{filename}",
+    "method": "GET",
+    "controller": "GetContactController"
   }
 ]
