@@ -136,6 +136,64 @@ class ContactController extends AbstractController
                 '.json';
 
             return $this->validResponse($file);
+        } elseif ($request->getMethod() === 'PATCH') {
+            $contactsDirectory = __DIR__ . '/../../var/contacts/';
+
+            $body = $request->getBody();
+            $data = json_decode($body, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                return $this->errorResponse('Invalid JSON format');
+            }
+            if (is_array($data) === false) {
+                return $this->errorResponse('Invalid data format');
+            }
+            $allowedProperties = ['email', 'subject', 'message'];
+            $receivedProperties = array_keys($data);
+            $unknownProperties = array_diff($receivedProperties, $allowedProperties);
+            if (!empty($unknownProperties) === true) {
+                return $this->errorResponse('Unknown properties');
+            }
+            if (isset($_GET['email'])) {
+                $email = $_GET['email'];
+            } else {
+                $email = null;
+            }
+
+            $files = scandir($contactsDirectory);
+            $contactFound = false;
+            foreach ($files as $file) {
+                if ($file === '.' || $file === '..') {
+                    continue;
+                }
+
+                $filePath = $contactsDirectory . $file;
+                $fileContent = file_get_contents($filePath);
+                $contactData = json_decode($fileContent, true);
+
+                if ($contactData['email'] === $email) {
+                    $contactFound = true;
+
+                    if (array_key_exists('email', $data)) {
+                        $contactData['email'] = $data['email'];
+                    }
+
+                    if (array_key_exists('subject', $data)) {
+                        $contactData['subject'] = $data['subject'];
+                    }
+
+                    if (array_key_exists('message', $data)) {
+                        $contactData['message'] = $data['message'];
+                    }
+                    $timestamp = time();
+                    $contactData['dateOfLastUpdate'] = $timestamp;
+                    $json = json_encode($contactData);
+                    file_put_contents($filePath, $json);
+                    return $this->contactResponse($contactData);
+                }
+            }
+            if ($contactFound === false) {
+                return $this->notFoundResponse();
+            }
         }
     }
 }
