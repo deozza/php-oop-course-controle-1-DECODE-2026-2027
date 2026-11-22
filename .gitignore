@@ -1,0 +1,8 @@
+# Dépendances Composer
+app/vendor/
+
+# Logs
+log/*.log
+
+# Données générées pendant les tests
+app/var/

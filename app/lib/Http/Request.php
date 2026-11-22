@@ -2,7 +2,8 @@
 
 namespace App\Http;
 
-class Request {
+class Request
+{
     private readonly string $uri;
     private readonly string $method;
     private readonly array $headers;
@@ -28,6 +29,8 @@ class Request {
     {
         return $this->headers;
     }
+    public function getBody(): string
+    {
+        return file_get_contents('php://input');
+    }
 }
-
-?>
