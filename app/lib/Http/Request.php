@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http;
+namespace Lib\Http;
 
 class Request {
     private readonly string $uri;

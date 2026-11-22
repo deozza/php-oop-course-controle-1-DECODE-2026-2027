@@ -1,9 +1,9 @@
 <?php
 
 
-namespace App\Http;
+namespace Lib\Http;
 
-use App\Controllers\AbstractController;
+use Lib\Controllers\AbstractController;
 
 class Router {
 
@@ -88,7 +88,7 @@ class Router {
         $controllerInstance = new $controllerName();
 
         if(is_subclass_of($controllerInstance, AbstractController::class) === false) {
-            throw new \Exception('Controller ' . $controllerName . ' must extends App\Controllers\AbstractController.');
+            throw new \Exception('Controller ' . $controllerName . ' must extends Lib\Controllers\AbstractController.');
         }
 
         return $controllerInstance;

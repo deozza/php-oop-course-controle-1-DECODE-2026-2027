@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http;
+namespace Lib\Http;
 
 class Response {
     public int $statusCode;
