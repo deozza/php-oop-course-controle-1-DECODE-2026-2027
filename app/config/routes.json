@@ -13,5 +13,10 @@
     "uri": "/contact",
     "method": "GET",
     "controller": "GetAllContactsController"
+  },
+  {
+    "uri": "/contact",
+    "method": "PATCH",
+    "controller": "PatchContactController"
   }
 ]
