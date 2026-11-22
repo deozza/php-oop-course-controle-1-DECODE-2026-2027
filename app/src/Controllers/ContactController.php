@@ -28,15 +28,53 @@ class ContactController extends AbstractController
         $response->content = json_encode(['file' => $filename]);
         return $response;
     }
+    private function notFoundResponse(): Response
+    {
+        $response = new Response();
+        $response->statusCode = 404;
+        $response->content = json_encode(['error' => 'Contact not found']);
+        return $response;
+    }
+    private function contactResponse(array $contactData): Response
+    {
+        $response = new Response();
+        $response->statusCode = 200;
+        $response->content = json_encode($contactData);
+        return $response;
+    }
     public function process(Request $request): Response
     {
         if ($request->getMethod() === 'GET') {
-
             $contactsDirectory = __DIR__ . '/../../var/contacts/';
+
+            if (isset($_GET['email'])) {
+                $email = $_GET['email'];
+            } else {
+                $email = null;
+            }
             $files = scandir($contactsDirectory);
+            $contactFound = false;
 
-            $contacts = [];
+            foreach ($files as $file) {
+                if ($file === '.' || $file === '..') {
+                    continue;
+                }
 
+                $filePath = $contactsDirectory . $file;
+                $fileContent = file_get_contents($filePath);
+                $contactData = json_decode($fileContent, true);
+
+                if ($contactData['email'] === $email) {
+                    $contactFound = true;
+                    return $this->contactResponse($contactData);
+                }
+            }
+            if ($contactFound === false) {
+                return $this->notFoundResponse();
+            }
+
+
+            /*$contacts = [];
             foreach ($files as $file) {
                 if ($file === '.' || $file === '..') {
                     continue;
@@ -48,12 +86,7 @@ class ContactController extends AbstractController
 
                 $contacts[] = $contactData;
             }
-
-            $response = new Response();
-            $response->statusCode = 200;
-            $response->content = json_encode($contacts);
-
-            return $response;
+            return $this->contactResponse($contactData);*/
         } elseif ($request->getMethod() === 'POST') {
             $body = $request->getBody();
             $data = json_decode($body, true);
