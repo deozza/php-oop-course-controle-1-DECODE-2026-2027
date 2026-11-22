@@ -13,12 +13,6 @@ class GetAllContactsController extends AbstractController
 
     public function process(Request $request): Response
     {
-        $params = $request->getQueryParams();
-
-        if (isset($params['file']) === true) {
-            return $this->getOneContact($params['file']);
-        }
-
         $contacts = [];
         $files = glob(self::CONTACTS_PATH . '*.json');
 
@@ -34,27 +28,6 @@ class GetAllContactsController extends AbstractController
         $response->statusCode = 200;
         $response->headers['Content-Type'] = 'application/json';
         $response->content = json_encode($contacts);
-
-        return $response;
-    }
-
-    private function getOneContact(string $fileName): Response
-    {
-        $response = new Response();
-        $response->headers['Content-Type'] = 'application/json';
-
-        $fileName = basename($fileName);
-        $path = self::CONTACTS_PATH . $fileName;
-
-        if (str_ends_with($fileName, '.json') === false || file_exists($path) === false) {
-            $response->statusCode = 404;
-            $response->content = json_encode(['error' => 'contact not found']);
-
-            return $response;
-        }
-
-        $response->statusCode = 200;
-        $response->content = file_get_contents($path);
 
         return $response;
     }
