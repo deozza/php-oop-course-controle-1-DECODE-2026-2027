@@ -1,9 +1,9 @@
 <?php
 
 
-namespace App\Http;
+namespace Lib\Http;
 
-use App\Controllers\AbstractController;
+use Lib\Controllers\AbstractController;
 
 class Router {
 
@@ -20,7 +20,7 @@ class Router {
         foreach($routes as $route) {
             $this->validateConfig($route);
             
-            if($this->checkUri($request, $route('uri')) === false) {
+            if($this->checkUri($request, $route['uri']) === false) {
                 continue;
             }
             $uriFoundFlag = true;
@@ -70,7 +70,17 @@ class Router {
     }
 
     private function checkUri(Request $request, string $uri): bool {
-        return $request->getUri() === $uri;
+        // "/contact/{filename}" devient "#^/contact/(?<filename>[^/]+)$#"
+        $pattern = preg_replace('#\{(\w+)\}#', '(?<$1>[^/]+)', $uri);
+
+        if (preg_match('#^' . $pattern . '$#', $request->getPath(), $matches) !== 1) {
+            return false;
+        }
+
+        $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+        $request->setParams(array_map('urldecode', $params));
+
+        return true;
     }
     
     private function checkMethod(Request $request, string $method): bool {
@@ -88,7 +98,7 @@ class Router {
         $controllerInstance = new $controllerName();
 
         if(is_subclass_of($controllerInstance, AbstractController::class) === false) {
-            throw new \Exception('Controller ' . $controllerName . ' must extends App\Controllers\AbstractController.');
+            throw new \Exception('Controller ' . $controllerName . ' must extends Lib\Controllers\AbstractController.');
         }
 
         return $controllerInstance;
@@ -97,5 +107,3 @@ class Router {
  
     
 }
-
-?>
