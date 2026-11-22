@@ -94,7 +94,7 @@ class Router
         $controllerInstance = new $controllerName();
 
         if (is_subclass_of($controllerInstance, AbstractController::class) === false) {
-            throw new \Exception('Controller ' . $controllerName . ' must extends App\Controllers\AbstractController.');
+            throw new \Exception('Controller ' . $controllerName . ' must extends App\lib\Controllers\AbstractController.');
         }
 
         return $controllerInstance;
