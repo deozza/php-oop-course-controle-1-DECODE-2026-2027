@@ -2,11 +2,8 @@
 
 namespace App\Http;
 
-class Response {
+class Response
+{
     public int $statusCode;
     public string $content;
 }
-
-
-?>
-
