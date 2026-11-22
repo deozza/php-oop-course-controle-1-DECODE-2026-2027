@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\Http\Router;
-use App\Http\Request;
+use App\lib\Http\Request;
 
 $request = new Request();
 

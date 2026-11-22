@@ -2,8 +2,8 @@
 
 namespace App\Controllers;
 
-use App\Http\Response;
-use App\Http\Request;
+use App\lib\Http\Request;
+use App\lib\Http\Response;
 
 abstract class AbstractController
 {
