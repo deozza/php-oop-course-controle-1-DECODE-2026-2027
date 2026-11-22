@@ -46,3 +46,17 @@ On a Linux host, if the contact forms cannot be saved (500), give Apache the rig
 ```bash
 docker compose exec php-framework-php chown -R www-data:www-data var
 ```
+
+                 *        .         *
+        .               /\
+                       /  \          .
+            *         | () |
+                      |    |    *
+         .           /|    |\
+                    / |____| \        .
+                   /__/ || \__\
+                       /||\
+                      ' '' '
+                     *  ~~  *
+                    .  ~~~~  .
+                    bon ca ressemble surtout au vaisseau de Yoda 
