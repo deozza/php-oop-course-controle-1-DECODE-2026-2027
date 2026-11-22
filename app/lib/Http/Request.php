@@ -8,6 +8,8 @@ class Request {
     private readonly array $headers;
     private readonly string $body;
 
+    private array $routeParams = [];
+
     public function __construct()
     {
         $this->uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?: '/';
@@ -45,5 +47,15 @@ class Request {
     public function getBody(): string
     {
         return $this->body;
+    }
+
+    public function setRouteParams(array $routeParams): void
+    {
+        $this->routeParams = $routeParams;
+    }
+
+    public function getRouteParam(string $name): ?string
+    {
+        return $this->routeParams[$name] ?? null;
     }
 }

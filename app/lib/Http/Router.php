@@ -66,7 +66,39 @@ class Router {
     }
 
     private function checkUri(Request $request, string $uri): bool {
-        return $request->getUri() === $uri;
+        if (str_contains($uri, '{') === false) {
+            return $request->getUri() === $uri;
+        }
+
+        $matches = [];
+        if (preg_match($this->getUriRegex($uri), $request->getUri(), $matches) !== 1) {
+            return false;
+        }
+
+        $params = [];
+        foreach ($matches as $name => $value) {
+            if (is_string($name)) {
+                $params[$name] = rawurldecode($value);
+            }
+        }
+        $request->setRouteParams($params);
+
+        return true;
+    }
+
+    private function getUriRegex(string $uri): string {
+        $parts = preg_split('/(\{[a-zA-Z_][a-zA-Z0-9_]*\})/', $uri, -1, PREG_SPLIT_DELIM_CAPTURE);
+        $regex = '';
+
+        foreach ($parts as $part) {
+            if (preg_match('/^\{([a-zA-Z_][a-zA-Z0-9_]*)\}$/', $part, $name) === 1) {
+                $regex .= '(?P<' . $name[1] . '>[^/]+)';
+                continue;
+            }
+            $regex .= preg_quote($part, '#');
+        }
+
+        return '#^' . $regex . '$#';
     }
 
     private function checkMethod(Request $request, string $method): bool {
