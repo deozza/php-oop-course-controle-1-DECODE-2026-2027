@@ -1,8 +1,7 @@
 RewriteEngine on
 
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-
-RewriteRule !\.(css|js|icon|zip|rar|png|jpg|gif|pdf|json)$ ./src/index.php [L,QSA,NC]
-RewriteRule ^$ ./src/index.php [L,QSA,NC]
-
+# Every request goes through the front controller, even uris ending with ".json"
+# (ex: /contact/1731245562_leia@alderaan.com.json). It also prevents direct access
+# to the stored contact forms (var/), the routes config (config/) and the code.
+RewriteCond %{REQUEST_URI} !^/src/index\.php$
+RewriteRule ^ src/index.php [L,QSA]
