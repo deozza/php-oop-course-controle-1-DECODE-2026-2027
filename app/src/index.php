@@ -2,13 +2,19 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use App\Http\Router;
-use App\Http\Request;
+use Lib\Http\Router;
+use Lib\Http\Request;
+use Lib\Http\Response;
 
-$request = new Request();
+try {
+    $request = new Request();
 
-$router = new Router();
-$router->main($request);
+    $router = new Router();
+    $response = $router->main($request);
+} catch(\Throwable $e) {
+    $response = new Response();
+    $response->statusCode = 500;
+    $response->content = 'internal server error';
+}
 
-
-?>
+$response->send();
