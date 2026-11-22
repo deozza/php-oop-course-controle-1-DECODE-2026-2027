@@ -13,8 +13,6 @@ class Router {
     public function main(Request $request): Response {
         $uriFoundFlag = false;
 
-        $response = new Response();
-
         try {
             $routes = $this->getRoutes();
 
@@ -36,23 +34,14 @@ class Router {
             }
         } catch(\Throwable $e) {
             error_log($e->getMessage());
-            $response->statusCode = 500;
-            $response->content = "internal server error";
-
-            return $response;
+            return JsonResponse::error(500, 'internal server error');
         }
 
         if($uriFoundFlag === true) {
-            $response->statusCode = 405;
-            $response->content = "invalid method";
-
-            return $response;
+            return JsonResponse::error(405, 'invalid method');
         }
 
-        $response->statusCode = 404;
-        $response->content = "route not found";
-
-        return $response;
+        return JsonResponse::error(404, 'route not found');
     }
 
     private function getRoutes(): array {
