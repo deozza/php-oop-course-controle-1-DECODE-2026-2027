@@ -23,5 +23,10 @@
     "uri": "/contact",
     "method": "DELETE",
     "controller": "DeleteContactController"
+  },
+  {
+    "uri": "/contact/{filename}",
+    "method": "GET",
+    "controller": "GetContactController"
   }
 ]
