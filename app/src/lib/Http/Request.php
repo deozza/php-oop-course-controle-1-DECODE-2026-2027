@@ -8,13 +8,15 @@ class Request
     private readonly string $method;
     private readonly array $headers;
     private readonly string $body;
+    private readonly array $queryParams;
 
     public function __construct()
     {
-        $this->uri = $_SERVER['REQUEST_URI'];
+        $this->uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         $this->method = $_SERVER['REQUEST_METHOD'];
         $this->headers = getallheaders();
         $this->body = file_get_contents('php://input');
+        $this->queryParams = $_GET;
     }
 
     public function getUri(): string
@@ -35,5 +37,10 @@ class Request
     public function getBody(): string
     {
         return $this->body;
+    }
+
+    public function getQueryParams(): array
+    {
+        return $this->queryParams;
     }
 }
