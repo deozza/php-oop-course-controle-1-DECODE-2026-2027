@@ -42,8 +42,25 @@ class ContactController extends AbstractController
         $response->content = json_encode($contactData);
         return $response;
     }
+    private function deleteResponse(): Response
+    {
+        $response = new Response();
+        $response->statusCode = 204;
+        $response->content = '';
+        return $response;
+    }
     public function process(Request $request): Response
     {
+        if (
+            $request->getMethod() === 'POST' ||
+            $request->getMethod() === 'PATCH'
+        ) {
+            $headers = $request->getHeaders();
+
+            if (!isset($headers['Content-Type']) || strpos($headers['Content-Type'], 'application/json') === false) {
+                return $this->errorResponse('Content-Type must be application/json');
+            }
+        }
         if ($request->getMethod() === 'GET') {
             $contactsDirectory = __DIR__ . '/../../var/contacts/';
 
@@ -52,8 +69,26 @@ class ContactController extends AbstractController
             } else {
                 $email = null;
             }
+
             $files = scandir($contactsDirectory);
-            $contactFound = false;
+
+            if ($email === null) {
+                $contacts = [];
+
+                foreach ($files as $file) {
+                    if ($file === '.' || $file === '..') {
+                        continue;
+                    }
+
+                    $filePath = $contactsDirectory . $file;
+                    $fileContent = file_get_contents($filePath);
+                    $contactData = json_decode($fileContent, true);
+
+                    $contacts[] = $contactData;
+                }
+
+                return $this->contactResponse($contacts);
+            }
 
             foreach ($files as $file) {
                 if ($file === '.' || $file === '..') {
@@ -65,28 +100,10 @@ class ContactController extends AbstractController
                 $contactData = json_decode($fileContent, true);
 
                 if ($contactData['email'] === $email) {
-                    $contactFound = true;
                     return $this->contactResponse($contactData);
                 }
             }
-            if ($contactFound === false) {
-                return $this->notFoundResponse();
-            }
-
-
-            /*$contacts = [];
-            foreach ($files as $file) {
-                if ($file === '.' || $file === '..') {
-                    continue;
-                }
-
-                $filePath = $contactsDirectory . $file;
-                $fileContent = file_get_contents($filePath);
-                $contactData = json_decode($fileContent, true);
-
-                $contacts[] = $contactData;
-            }
-            return $this->contactResponse($contactData);*/
+            return $this->notFoundResponse();
         } elseif ($request->getMethod() === 'POST') {
             $body = $request->getBody();
             $data = json_decode($body, true);
@@ -191,6 +208,38 @@ class ContactController extends AbstractController
                     return $this->contactResponse($contactData);
                 }
             }
+            if ($contactFound === false) {
+                return $this->notFoundResponse();
+            }
+        } elseif ($request->getMethod() === 'DELETE') {
+            $contactsDirectory = __DIR__ . '/../../var/contacts/';
+
+            if (isset($_GET['email'])) {
+                $email = $_GET['email'];
+            } else {
+                $email = null;
+            }
+
+            $files = scandir($contactsDirectory);
+            $contactFound = false;
+
+            foreach ($files as $file) {
+                if ($file === '.' || $file === '..') {
+                    continue;
+                }
+
+                $filePath = $contactsDirectory . $file;
+                $fileContent = file_get_contents($filePath);
+                $contactData = json_decode($fileContent, true);
+
+                if ($contactData['email'] === $email) {
+                    $contactFound = true;
+                    unlink($filePath);
+
+                    return $this->deleteResponse();
+                }
+            }
+
             if ($contactFound === false) {
                 return $this->notFoundResponse();
             }
