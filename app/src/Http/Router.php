@@ -69,7 +69,7 @@ class Router
     private function validateConfig(array $route): void
     {
         if (array_key_exists('uri', $route) === false || array_key_exists('method', $route) === false) {
-            throw new \Exception(500, 'Le fichier de config est mal écrit');
+            throw new \Exception('Le fichier de config est mal écrit', 500);
         }
     }
 
