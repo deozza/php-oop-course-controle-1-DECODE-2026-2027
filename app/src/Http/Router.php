@@ -6,7 +6,7 @@ namespace App\Http;
 use App\lib\Http\Request;
 use App\lib\Http\Response;
 
-use App\Controllers\AbstractController;
+use App\lib\Controllers\AbstractController;
 
 class Router
 {

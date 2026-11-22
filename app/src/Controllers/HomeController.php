@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\lib\Controllers\AbstractController;
 use App\lib\Http\Request;
 use App\lib\Http\Response;
 
